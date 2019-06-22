@@ -1,10 +1,6 @@
-# ml-ground-up
+# Machine learning from the ground up
+
 Machine learning methods implemented in NumPy with an emphasis on simple explanations and an abundance of well commented code.
-
-
-# Project Title
-
-One Paragraph of project description goes here
 
 ## Getting Started
 
