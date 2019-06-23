@@ -1,9 +1,9 @@
 # Machine learning from the ground up
 
-Machine learning methods implemented in NumPy with an emphasis on simple explanations and well commented code.
+Machine learning methods implemented in NumPy with simple, clear explanations and well commented code.
 
 ## Table of Contents
 
 ## Acknowledgments
 
-Inspired by [ml-from-scratch](https://github.com/eriklindernoren/ML-From-Scratch).
+This project was inspired by [ml-from-scratch](https://github.com/eriklindernoren/ML-From-Scratch) but 
