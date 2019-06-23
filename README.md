@@ -6,4 +6,4 @@ Machine learning methods implemented in NumPy with simple, clear explanations an
 
 ## Acknowledgments
 
-This project was inspired by [ml-from-scratch](https://github.com/eriklindernoren/ML-From-Scratch) but 
+Inspired by [ml-from-scratch](https://github.com/eriklindernoren/ML-From-Scratch).
