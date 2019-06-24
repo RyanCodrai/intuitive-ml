@@ -1,8 +1,10 @@
 import numpy as np
-
 import time
 import sys
 import math
+
+from activation_functions import * 
+
 
 def seconds_to_string(s):
     """Returns a nicely formatted string in the form 00d 00h 00m 00s"""
@@ -17,9 +19,9 @@ def seconds_to_string(s):
 
 
 def progress(current, total, start, last_update):
-    """Output progress with progress bar like """
+    """Output progress with progress bar"""
     # Don't update if less than a tenth of a second has passed
-    if (time.time() - last_update) < 0.25 and not current == total:
+    if (time.time() - last_update) < 0.1 and not current == total:
         return last_update
 
     # Calculate time passed and time remaining
@@ -85,25 +87,6 @@ def init_layers(nn_architecture, seed = 99):
             layer_output_size, 1) * 0.1
         
     return params_values
-
-
-def sigmoid(Z):
-    return 1/(1+np.exp(-Z))
-
-
-def relu(Z):
-    return np.maximum(0,Z)
-
-
-def sigmoid_backward(dA, Z):
-    sig = sigmoid(Z)
-    return dA * sig * (1 - sig)
-
-
-def relu_backward(dA, Z):
-    dZ = np.array(dA, copy = True)
-    dZ[Z <= 0] = 0;
-    return dZ;
 
 
 def single_layer_forward_propagation(A_prev, W_curr, b_curr, activation="relu"):
