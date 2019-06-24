@@ -1,5 +1,56 @@
 import numpy as np
 
+import time
+import sys
+import math
+
+def seconds_to_string(s):
+    """Returns a nicely formatted string in the form 00d 00h 00m 00s"""
+    m, s = divmod(s, 60)
+    h, m = divmod(m, 60)
+    d, h = divmod(h, 24)
+    string = '%ds' % s
+    string = int(min(1, m)) * ('%dm ' % m) + string
+    string = int(min(1, h)) * ('%dh ' % h) + string
+    string = int(min(1, d)) * ('%dh ' % d) + string
+    return string
+
+
+def progress(current, total, start, last_update):
+    """Output progress with progress bar like """
+    # Don't update if less than a tenth of a second has passed
+    if (time.time() - last_update) < 0.25 and not current == total:
+        return last_update
+
+    # Calculate time passed and time remaining
+    passed = time.time() - start
+    remaining = passed / float(current) * float(total - current)
+
+    # Output progress
+    sys.stdout.write('\r{0: >{1}}/{2} '.format(current, len(str(total)), total))
+    # Output progress bar
+    length = math.floor(30 * current / float(total))
+    sys.stdout.write('[%s] - ' % ('=' * length + '>' * min(1, 30 - length) + '.' * (30 - length - 1)))
+
+    # If task has completed then report time taken
+    if current == total:
+        sys.stdout.write(seconds_to_string(passed))
+    # If task has not completed then report eta
+    else:
+        sys.stdout.write("ETA: " + seconds_to_string(remaining))
+
+    # Output padding
+    sys.stdout.write(" " * 20)
+    # Allow progress bar to persist if it's complete
+    if current == total:
+        sys.stdout.write("\n")
+    # Flush to standard out
+    sys.stdout.flush()
+    # Return the time of the progress update
+    return time.time()
+
+
+
 NN_ARCHITECTURE = [
     {"input_dim": 2, "output_dim": 25, "activation": "relu"},
     {"input_dim": 25, "output_dim": 50, "activation": "relu"},
@@ -198,9 +249,13 @@ def train(X, Y, nn_architecture, epochs, learning_rate, verbose=False, callback=
     # of metrics calculated during the learning process 
     cost_history = []
     accuracy_history = []
+
+    last_update = start = time.time()
     
     # performing calculations for subsequent iterations
     for i in range(epochs):
+        last_update = progress(i + 1, epochs, start, last_update)
+
         # step forward
         Y_hat, cashe = full_forward_propagation(X, params_values, nn_architecture)
         
