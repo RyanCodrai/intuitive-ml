@@ -1,20 +1,19 @@
 import numpy as np
 
+class sigmoid():
+	def __call__(self, z):
+		return 1 / (1 + np.exp(-z))
 
-def sigmoid(Z):
-    return 1/(1+np.exp(-Z))
+	def derivative(self, dA, Z):
+		sig = sigmoid()
+		sig = sig(Z)
+		return dA * sig * (1 - sig)
 
+class relu():
+	def __call__(self, z):
+		return np.maximum(0, z)
 
-def relu(Z):
-    return np.maximum(0,Z)
-
-
-def sigmoid_backward(dA, Z):
-    sig = sigmoid(Z)
-    return dA * sig * (1 - sig)
-
-
-def relu_backward(dA, Z):
-    dZ = np.array(dA, copy = True)
-    dZ[Z <= 0] = 0;
-    return dZ;
+	def derivative(self, dA, Z):
+		dZ = np.array(dA, copy = True)
+		dZ[Z <= 0] = 0;
+		return dZ;

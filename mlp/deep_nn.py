@@ -54,11 +54,11 @@ def progress(current, total, start, last_update):
 
 
 NN_ARCHITECTURE = [
-    {"input_dim": 2, "output_dim": 25, "activation": "relu"},
-    {"input_dim": 25, "output_dim": 50, "activation": "relu"},
-    {"input_dim": 50, "output_dim": 50, "activation": "relu"},
-    {"input_dim": 50, "output_dim": 25, "activation": "relu"},
-    {"input_dim": 25, "output_dim": 1, "activation": "sigmoid"},
+    {"input_dim": 2, "output_dim": 25, "activation": relu()},
+    {"input_dim": 25, "output_dim": 50, "activation": relu()},
+    {"input_dim": 50, "output_dim": 50, "activation": relu()},
+    {"input_dim": 50, "output_dim": 25, "activation": relu()},
+    {"input_dim": 25, "output_dim": 1, "activation": sigmoid()},
 ]
 
 
@@ -92,17 +92,9 @@ def init_layers(nn_architecture, seed = 99):
 def single_layer_forward_propagation(A_prev, W_curr, b_curr, activation="relu"):
     # calculation of the input value for the activation function
     Z_curr = np.dot(W_curr, A_prev) + b_curr
-    
-    # selection of activation function
-    if activation is "relu":
-        activation_func = relu
-    elif activation is "sigmoid":
-        activation_func = sigmoid
-    else:
-        raise Exception('Non-supported activation function')
-        
-    # return of calculated activation A and the intermediate Z matrix
-    return activation_func(Z_curr), Z_curr
+    return activation(Z_curr), Z_curr
+
+    # raise Exception('Non-supported activation function')
 
 
 def full_forward_propagation(X, params_values, nn_architecture):
@@ -160,16 +152,8 @@ def single_layer_backward_propagation(dA_curr, W_curr, b_curr, Z_curr, A_prev, a
     # number of examples
     m = A_prev.shape[1]
     
-    # selection of activation function
-    if activation is "relu":
-        backward_activation_func = relu_backward
-    elif activation is "sigmoid":
-        backward_activation_func = sigmoid_backward
-    else:
-        raise Exception('Non-supported activation function')
-    
     # calculation of the activation function derivative
-    dZ_curr = backward_activation_func(dA_curr, Z_curr)
+    dZ_curr = activation.derivative(dA_curr, Z_curr)
     
     # derivative of the matrix W
     dW_curr = np.dot(dZ_curr, A_prev.T) / m
