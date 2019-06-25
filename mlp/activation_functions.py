@@ -1,15 +1,15 @@
 import numpy as np
 
 class sigmoid():
-	def __call__(self, z):
-		return 1 / (1 + np.exp(-z))
+	def __call__(self, x):
+		return 1 / (1 + np.exp(-x))
 
-	def derivative(self, z):
-		return self.__call__(z) * (1 - self.__call__(z))
+	def derivative(self, x):
+		return self.__call__(x) * (1 - self.__call__(x))
 
 class relu():
-	def __call__(self, z):
-		return np.maximum(0, z)
+	def __call__(self, x):
+		return np.maximum(0, x)
 
-	def derivative(self, z):
-		return np.greater(z, 0).astype(int)
+	def derivative(self, x):
+		return np.where(x <= 0, 0, 1)
