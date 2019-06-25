@@ -3,7 +3,7 @@ import time
 import sys
 import math
 
-from activation_functions import * 
+from activation_functions import *
 
 
 def seconds_to_string(s):
@@ -39,13 +39,13 @@ def progress(current, total, start, last_update):
         sys.stdout.write(seconds_to_string(passed))
     # If task has not completed then report eta
     else:
-        sys.stdout.write("ETA: " + seconds_to_string(remaining))
+        sys.stdout.write('ETA: ' + seconds_to_string(remaining))
 
     # Output padding
-    sys.stdout.write(" " * 20)
+    sys.stdout.write(' ' * 20)
     # Allow progress bar to persist if it's complete
     if current == total:
-        sys.stdout.write("\n")
+        sys.stdout.write('\n')
     # Flush to standard out
     sys.stdout.flush()
     # Return the time of the progress update
@@ -53,43 +53,34 @@ def progress(current, total, start, last_update):
 
 
 
-NN_ARCHITECTURE = [
-    {"input_dim": 2, "output_dim": 25, "activation": relu()},
-    {"input_dim": 25, "output_dim": 50, "activation": relu()},
-    {"input_dim": 50, "output_dim": 50, "activation": relu()},
-    {"input_dim": 50, "output_dim": 25, "activation": relu()},
-    {"input_dim": 25, "output_dim": 1, "activation": sigmoid()},
+nn_architecture = [
+    {'input_shape': 2, 'output_shape': 25, 'activation': relu()},
+    {'input_shape': 25, 'output_shape': 50, 'activation': relu()},
+    {'input_shape': 50, 'output_shape': 50, 'activation': relu()},
+    {'input_shape': 50, 'output_shape': 25, 'activation': relu()},
+    {'input_shape': 25, 'output_shape': 1, 'activation': sigmoid()},
 ]
 
 
-def init_layers(nn_architecture, seed = 99):
+def init_layers(nn_architecture, seed = 2):
     # random seed initiation
     np.random.seed(seed)
     # number of layers in our neural network
     number_of_layers = len(nn_architecture)
     # parameters storage initiation
     params_values = {}
-    
+
     # iteration over network layers
-    for idx, layer in enumerate(nn_architecture):
-        # we number network layers from 1
-        layer_idx = idx + 1
-        
-        # extracting the number of units in layers
-        layer_input_size = layer["input_dim"]
-        layer_output_size = layer["output_dim"]
-        
+    for i, layer in enumerate(nn_architecture, start = 1):
         # initiating the values of the W matrix
         # and vector b for subsequent layers
-        params_values['W' + str(layer_idx)] = np.random.randn(
-            layer_output_size, layer_input_size) * 0.1
-        params_values['b' + str(layer_idx)] = np.random.randn(
-            layer_output_size, 1) * 0.1
+        params_values['W%d' % i] = np.random.randn(layer['output_shape'], layer['input_shape']) * 0.1
+        params_values['b%d' % i] = np.random.randn(layer['output_shape'], 1) * 0.1
         
     return params_values
 
 
-def single_layer_forward_propagation(A_prev, W_curr, b_curr, activation="relu"):
+def single_layer_forward_propagation(A_prev, W_curr, b_curr, activation='relu'):
     # calculation of the input value for the activation function
     Z_curr = np.dot(W_curr, A_prev) + b_curr
     return activation(Z_curr), Z_curr
@@ -111,17 +102,17 @@ def full_forward_propagation(X, params_values, nn_architecture):
         A_prev = A_curr
         
         # extraction of the activation function for the current layer
-        activ_function_curr = layer["activation"]
+        activ_function_curr = layer['activation']
         # extraction of W for the current layer
-        W_curr = params_values["W" + str(layer_idx)]
+        W_curr = params_values['W' + str(layer_idx)]
         # extraction of b for the current layer
-        b_curr = params_values["b" + str(layer_idx)]
+        b_curr = params_values['b' + str(layer_idx)]
         # calculation of activation for the current layer
         A_curr, Z_curr = single_layer_forward_propagation(A_prev, W_curr, b_curr, activ_function_curr)
         
         # saving calculated values in the memory
-        memory["A" + str(idx)] = A_prev
-        memory["Z" + str(layer_idx)] = Z_curr
+        memory['A' + str(idx)] = A_prev
+        memory['Z' + str(layer_idx)] = Z_curr
        
     # return of prediction vector and a dictionary containing intermediate values
     return A_curr, memory
@@ -148,12 +139,12 @@ def get_accuracy_value(Y_hat, Y):
     return (Y_hat_ == Y).all(axis=0).mean()
 
 
-def single_layer_backward_propagation(dA_curr, W_curr, b_curr, Z_curr, A_prev, activation="relu"):
+def single_layer_backward_propagation(dA_curr, W_curr, b_curr, Z_curr, A_prev, activation='relu'):
     # number of examples
     m = A_prev.shape[1]
     
     # calculation of the activation function derivative
-    dZ_curr = activation.derivative(dA_curr, Z_curr)
+    dZ_curr = dA_curr * activation.derivative(Z_curr)
     
     # derivative of the matrix W
     dW_curr = np.dot(dZ_curr, A_prev.T) / m
@@ -180,21 +171,21 @@ def full_backward_propagation(Y_hat, Y, memory, params_values, nn_architecture):
         # we number network layers from 1
         layer_idx_curr = layer_idx_prev + 1
         # extraction of the activation function for the current layer
-        activ_function_curr = layer["activation"]
+        activ_function_curr = layer['activation']
         
         dA_curr = dA_prev
         
-        A_prev = memory["A" + str(layer_idx_prev)]
-        Z_curr = memory["Z" + str(layer_idx_curr)]
+        A_prev = memory['A' + str(layer_idx_prev)]
+        Z_curr = memory['Z' + str(layer_idx_curr)]
         
-        W_curr = params_values["W" + str(layer_idx_curr)]
-        b_curr = params_values["b" + str(layer_idx_curr)]
+        W_curr = params_values['W' + str(layer_idx_curr)]
+        b_curr = params_values['b' + str(layer_idx_curr)]
         
         dA_prev, dW_curr, db_curr = single_layer_backward_propagation(
             dA_curr, W_curr, b_curr, Z_curr, A_prev, activ_function_curr)
         
-        grads_values["dW" + str(layer_idx_curr)] = dW_curr
-        grads_values["db" + str(layer_idx_curr)] = db_curr
+        grads_values['dW' + str(layer_idx_curr)] = dW_curr
+        grads_values['db' + str(layer_idx_curr)] = db_curr
     
     return grads_values
 
@@ -203,15 +194,15 @@ def update(params_values, grads_values, nn_architecture, learning_rate):
 
     # iteration over network layers
     for layer_idx, layer in enumerate(nn_architecture, 1):
-        params_values["W" + str(layer_idx)] -= learning_rate * grads_values["dW" + str(layer_idx)]        
-        params_values["b" + str(layer_idx)] -= learning_rate * grads_values["db" + str(layer_idx)]
+        params_values['W' + str(layer_idx)] -= learning_rate * grads_values['dW' + str(layer_idx)]        
+        params_values['b' + str(layer_idx)] -= learning_rate * grads_values['db' + str(layer_idx)]
 
     return params_values;
 
 
 def train(X, Y, nn_architecture, epochs, learning_rate, verbose=False, callback=None):
     # initiation of neural net parameters
-    params_values = init_layers(nn_architecture, 2)
+    params_values = init_layers(nn_architecture)
     # initiation of lists storing the history 
     # of metrics calculated during the learning process 
     cost_history = []
@@ -239,7 +230,7 @@ def train(X, Y, nn_architecture, epochs, learning_rate, verbose=False, callback=
         
         if(i % 50 == 0):
             if(verbose):
-                print("Iteration: {:05} - cost: {:.5f} - accuracy: {:.5f}".format(i, cost, accuracy))
+                print('Iteration: {:05} - cost: {:.5f} - accuracy: {:.5f}'.format(i, cost, accuracy))
             if(callback is not None):
                 callback(i, params_values)
             
@@ -261,12 +252,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE, r
 
 
 # Training
-params_values = train(np.transpose(X_train), np.transpose(y_train.reshape((y_train.shape[0], 1))), NN_ARCHITECTURE, 10000, 0.01)
+params_values = train(np.transpose(X_train), np.transpose(y_train.reshape((y_train.shape[0], 1))), nn_architecture, 10000, 0.01)
 
 
 # Prediction
-Y_test_hat, _ = full_forward_propagation(np.transpose(X_test), params_values, NN_ARCHITECTURE)
+Y_test_hat, _ = full_forward_propagation(np.transpose(X_test), params_values, nn_architecture)
 
 # Accuracy achieved on the test set
 acc_test = get_accuracy_value(Y_test_hat, np.transpose(y_test.reshape((y_test.shape[0], 1))))
-print("Test set accuracy: {:.2f} - David".format(acc_test))
+print('Test set accuracy: {:.2f} - David'.format(acc_test))
