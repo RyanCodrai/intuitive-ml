@@ -3,7 +3,8 @@ import time
 import sys
 import math
 
-from activation_functions import *
+from models import Sequential
+from layers import Dense
 
 
 def seconds_to_string(s):
@@ -52,35 +53,36 @@ def progress(current, total, start, last_update):
     return time.time()
 
 
-
-nn_architecture = [
-    {'input_shape': 2, 'output_shape': 25, 'activation': relu()},
-    {'input_shape': 25, 'output_shape': 50, 'activation': relu()},
-    {'input_shape': 50, 'output_shape': 50, 'activation': relu()},
-    {'input_shape': 50, 'output_shape': 25, 'activation': relu()},
-    {'input_shape': 25, 'output_shape': 1, 'activation': sigmoid()},
-]
+model = Sequential()
+model.add(Dense(25, input_shape=2, activation="relu"))
+model.add(Dense(50, activation="relu"))
+model.add(Dense(50, activation="relu"))
+model.add(Dense(25, activation="relu"))
+model.add(Dense(1, activation="sigmoid"))
 
 
-def init_layers(nn_architecture, seed = 2):
+# {'input_shape': 2, 'output_shape': 25, 'activation': Relu()},
+# {'input_shape': 25, 'output_shape': 50, 'activation': Relu()},
+# {'input_shape': 50, 'output_shape': 50, 'activation': Relu()},
+# {'input_shape': 50, 'output_shape': 25, 'activation': Relu()},
+# {'input_shape': 25, 'output_shape': 1, 'activation': Sigmoid()},
+
+
+def init_layers(seed = 2):
     # random seed initiation
     np.random.seed(seed)
-    # number of layers in our neural network
-    number_of_layers = len(nn_architecture)
-    # parameters storage initiation
-    params_values = {}
 
     # iteration over network layers
-    for i, layer in enumerate(nn_architecture, start = 1):
+    for layer in model.layers:
         # initiating the values of the W matrix
         # and vector b for subsequent layers
-        params_values['W%d' % i] = np.random.randn(layer['output_shape'], layer['input_shape']) * 0.1
-        params_values['b%d' % i] = np.random.randn(layer['output_shape'], 1) * 0.1
-        
-    return params_values
+        layer.weights = np.random.randn(layer.output_shape, layer.input_shape) * 0.1
+        layer.bias = np.random.randn(layer.output_shape, 1) * 0.1
 
 
-def single_layer_forward_propagation(A_prev, W_curr, b_curr, activation='relu'):
+
+
+def forward_propagation(A_prev, W_curr, b_curr, activation):
     # calculation of the input value for the activation function
     Z_curr = np.dot(W_curr, A_prev) + b_curr
     return activation(Z_curr), Z_curr
@@ -108,7 +110,7 @@ def full_forward_propagation(X, params_values, nn_architecture):
         # extraction of b for the current layer
         b_curr = params_values['b' + str(layer_idx)]
         # calculation of activation for the current layer
-        A_curr, Z_curr = single_layer_forward_propagation(A_prev, W_curr, b_curr, activ_function_curr)
+        A_curr, Z_curr = forward_propagation(A_prev, W_curr, b_curr, activ_function_curr)
         
         # saving calculated values in the memory
         memory['A' + str(idx)] = A_prev
@@ -252,7 +254,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE, r
 
 
 # Training
-params_values = train(np.transpose(X_train), np.transpose(y_train.reshape((y_train.shape[0], 1))), nn_architecture, 10000, 0.01)
+params_values = train(np.transpose(X_train), np.transpose(y_train.reshape((y_train.shape[0], 1))), model, 10000, 0.01)
 
 
 # Prediction
