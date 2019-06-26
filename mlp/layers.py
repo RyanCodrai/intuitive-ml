@@ -2,8 +2,8 @@ import numpy as np
 from activation_functions import Relu, Sigmoid
 
 class Dense():
-	def __init__(self, output_shape, activation, input_shape=None):
-		self.output_shape = output_shape
+	def __init__(self, units, activation_function, input_shape=None):
+		self.units = units
 
 		if input_shape is not None:
 			self.input_shape = input_shape
@@ -13,10 +13,10 @@ class Dense():
 		self.bias = None
 
 		# Instantiate the chosen activation function
-		if activation is "relu":
-			self.activation = Relu()
-		if activation is "sigmoid":
-			self.activation = Sigmoid()
+		if activation_function is "relu":
+			self.activation_function = Relu()
+		if activation_function is "sigmoid":
+			self.activation_function = Sigmoid()
 
 
 
