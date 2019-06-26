@@ -54,47 +54,37 @@ def progress(current, total, start, last_update):
 
 
 model = Sequential()
-model.add(Dense(25, input_shape=2, activation="relu"))
-model.add(Dense(50, activation="relu"))
-model.add(Dense(50, activation="relu"))
-model.add(Dense(25, activation="relu"))
-model.add(Dense(1, activation="sigmoid"))
-
-
-# {'input_shape': 2, 'output_shape': 25, 'activation': Relu()},
-# {'input_shape': 25, 'output_shape': 50, 'activation': Relu()},
-# {'input_shape': 50, 'output_shape': 50, 'activation': Relu()},
-# {'input_shape': 50, 'output_shape': 25, 'activation': Relu()},
-# {'input_shape': 25, 'output_shape': 1, 'activation': Sigmoid()},
+model.add(Dense(25, activation_function="relu", input_shape=2))
+model.add(Dense(50, activation_function="relu"))
+model.add(Dense(50, activation_function="relu"))
+model.add(Dense(25, activation_function="relu"))
+model.add(Dense(1, activation_function="sigmoid"))
 
 
 def init_layers(seed = 2):
     # random seed initiation
     np.random.seed(seed)
 
-    # iteration over network layers
+    # Iterate over the layers of the neural network
     for layer in model.layers:
-        # initiating the values of the W matrix
-        # and vector b for subsequent layers
-        layer.weights = np.random.randn(layer.output_shape, layer.input_shape) * 0.1
-        layer.bias = np.random.randn(layer.output_shape, 1) * 0.1
+        # The number of units in a layer is equivilant to the number of outputs
+        layer.W = np.random.randn(layer.units, layer.input_shape) * 0.1
+        layer.b = np.random.randn(layer.units, 1) * 0.1
 
 
+def forward_propagation(X):
+    # The input X acts as the activation, A_prev, for the previous layer
+    A_prev = X
+    # Iterate over the layers of the neural network
+    for layer in model.layers:
+        # Calculate the affine transformation, Z, for the current layer
+        Z = np.dot(layer.W, A_prev) + layer.b
+        # Calculate the activations, A, for the current layer
+        A = layer.activation_function(Z)
+        # Update the pointer to the activations for the previous layer, A_prev, ready for the next iteration
+        A_prev = A
 
 
-def forward_propagation(A_prev, W_curr, b_curr, activation):
-    # calculation of the input value for the activation function
-    Z_curr = np.dot(W_curr, A_prev) + b_curr
-    return activation(Z_curr), Z_curr
-
-    # raise Exception('Non-supported activation function')
-
-
-def full_forward_propagation(X, params_values, nn_architecture):
-    # creating a temporary memory to store the information needed for a backward step
-    memory = {}
-    # X vector is the activation for layer 0 
-    A_curr = X
     
     # iteration over network layers
     for idx, layer in enumerate(nn_architecture):
@@ -110,7 +100,9 @@ def full_forward_propagation(X, params_values, nn_architecture):
         # extraction of b for the current layer
         b_curr = params_values['b' + str(layer_idx)]
         # calculation of activation for the current layer
-        A_curr, Z_curr = forward_propagation(A_prev, W_curr, b_curr, activ_function_curr)
+
+        Z_curr = np.dot(W_curr, A_prev) + b_curr
+        A_curr, Z_curr =  activation(Z_curr), Z_curr
         
         # saving calculated values in the memory
         memory['A' + str(idx)] = A_prev
