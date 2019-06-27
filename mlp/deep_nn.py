@@ -4,7 +4,7 @@ import sys
 import math
 
 from models import Sequential
-from layers import Dense
+from layers import Dense, Input
 
 
 def seconds_to_string(s):
@@ -54,69 +54,48 @@ def progress(current, total, start, last_update):
 
 
 model = Sequential()
-model.add(Dense(25, activation_function="relu", input_shape=2))
+model.add(Input(2))
+model.add(Dense(25, activation_function="relu"))
 model.add(Dense(50, activation_function="relu"))
 model.add(Dense(50, activation_function="relu"))
 model.add(Dense(25, activation_function="relu"))
 model.add(Dense(1, activation_function="sigmoid"))
 
 
-def init_layers(seed = 2):
+def initialise_layer_parameters(seed = 2):
     # random seed initiation
     np.random.seed(seed)
 
     # Iterate over the layers of the neural network
-    for layer in model.layers:
-        # The number of units in a layer is equivilant to the number of outputs
-        layer.W = np.random.randn(layer.units, layer.input_shape) * 0.1
-        layer.b = np.random.randn(layer.units, 1) * 0.1
+    for previous_layer, current_layer in zip(model.layers[:-1], model.layers[1:]):
+        # Let units(l) be the number of units for layer l
+        # There are units(l-1) weights for every unit in the current layer
+        # This is why the weight matrix is units(l) * units(l - 1) in size
+        current_layer.W = np.random.randn(current_layer.units, previous_layer.units) * 0.1
+        # There is one bias value for each unit in the current layer
+        current_layer.b = np.random.randn(current_layer.units, 1) * 0.1
 
 
 def forward_propagation(X):
-    # The input X acts as the activation, A_prev, for the previous layer
-    A_prev = X
+    # Pass the batch, X, to the input layer in the form of layer activations
+    model.layers[0].A = X
+
     # Iterate over the layers of the neural network
-    for layer in model.layers:
+    for previous_layer, current_layer in zip(model.layers[:-1], model.layers[1:]):
         # Calculate the affine transformation, Z, for the current layer
-        Z = np.dot(layer.W, A_prev) + layer.b
+        current_layer.Z = np.dot(current_layer.W, previous_layer.A) + current_layer.b
         # Calculate the activations, A, for the current layer
-        A = layer.activation_function(Z)
-        # Update the pointer to the activations for the previous layer, A_prev, ready for the next iteration
-        A_prev = A
+        current_layer.A = current_layer.activation_function(current_layer.Z)
 
-
-    
-    # iteration over network layers
-    for idx, layer in enumerate(nn_architecture):
-        # we number network layers from 1
-        layer_idx = idx + 1
-        # transfer the activation from the previous iteration
-        A_prev = A_curr
-        
-        # extraction of the activation function for the current layer
-        activ_function_curr = layer['activation']
-        # extraction of W for the current layer
-        W_curr = params_values['W' + str(layer_idx)]
-        # extraction of b for the current layer
-        b_curr = params_values['b' + str(layer_idx)]
-        # calculation of activation for the current layer
-
-        Z_curr = np.dot(W_curr, A_prev) + b_curr
-        A_curr, Z_curr =  activation(Z_curr), Z_curr
-        
-        # saving calculated values in the memory
-        memory['A' + str(idx)] = A_prev
-        memory['Z' + str(layer_idx)] = Z_curr
-       
-    # return of prediction vector and a dictionary containing intermediate values
-    return A_curr, memory
+    # Return the activations of the last layer of the neural network
+    return model.layers[-1].A
 
 
 def get_cost_value(Y_hat, Y):
-    # number of examples
-    m = Y_hat.shape[1]
-    # calculation of the cost according to the formula
-    cost = -1 / m * (np.dot(Y, np.log(Y_hat).T) + np.dot(1 - Y, np.log(1 - Y_hat).T))
+    # Calculate the number of training examples
+    n = Y_hat.shape[1]
+    # Calculate the cost
+    cost = -1 / n * (np.dot(Y, np.log(Y_hat).T) + np.dot(1 - Y, np.log(1 - Y_hat).T))
     return np.squeeze(cost)
 
 
@@ -196,7 +175,7 @@ def update(params_values, grads_values, nn_architecture, learning_rate):
 
 def train(X, Y, nn_architecture, epochs, learning_rate, verbose=False, callback=None):
     # initiation of neural net parameters
-    params_values = init_layers(nn_architecture)
+    initialise_layer_parameters()
     # initiation of lists storing the history 
     # of metrics calculated during the learning process 
     cost_history = []
@@ -209,7 +188,8 @@ def train(X, Y, nn_architecture, epochs, learning_rate, verbose=False, callback=
         last_update = progress(i + 1, epochs, start, last_update)
 
         # step forward
-        Y_hat, cashe = full_forward_propagation(X, params_values, nn_architecture)
+        Y_hat = forward_propagation(X)
+        print(Y_hat)
         
         # calculating metrics and saving them in history
         cost = get_cost_value(Y_hat, Y)
