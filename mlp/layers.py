@@ -2,11 +2,8 @@ import numpy as np
 from activation_functions import Relu, Sigmoid
 
 class Dense():
-	def __init__(self, units, activation_function, input_shape=None):
+	def __init__(self, units, activation_function):
 		self.units = units
-
-		if input_shape is not None:
-			self.input_shape = input_shape
 
 		# Instantiate the weights and bias
 		self.weights = None
@@ -18,6 +15,10 @@ class Dense():
 		if activation_function is "sigmoid":
 			self.activation_function = Sigmoid()
 
+class Input():
+	def __init__(self, units):
+		self.units = units
+		self.A = None
 
 
 
