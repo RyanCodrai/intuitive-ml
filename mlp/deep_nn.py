@@ -76,7 +76,7 @@ def initialise_layer_parameters(seed = 2):
         current_layer.b = np.random.randn(current_layer.units, 1) * 0.1
 
 
-def forward_propagation(X):
+def forward_propagation(X): 
     # Pass the batch, X, to the input layer in the form of layer activations
     model.layers[0].A = X
 
@@ -87,15 +87,16 @@ def forward_propagation(X):
         # Calculate the activations, A, for the current layer
         current_layer.A = current_layer.activation_function(current_layer.Z)
 
-    # Return the activations of the last layer of the neural network
+    # Return the activations from the last layer
     return model.layers[-1].A
 
 
-def get_cost_value(Y_hat, Y):
+def get_cost_value(y_hat, y):
     # Calculate the number of training examples
-    n = Y_hat.shape[1]
-    # Calculate the cost
-    cost = -1 / n * (np.dot(Y, np.log(Y_hat).T) + np.dot(1 - Y, np.log(1 - Y_hat).T))
+    n = y_hat.shape[1]
+    # Calculate the cross-entropy cost
+    cost = -1 / n * (np.dot(y, np.log(y_hat).T) + np.dot(1 - y, np.log(1 - y_hat).T))
+    # Return the cost
     return np.squeeze(cost)
 
 
@@ -107,73 +108,43 @@ def convert_prob_into_class(probs):
     return probs_
 
 
-def get_accuracy_value(Y_hat, Y):
-    Y_hat_ = convert_prob_into_class(Y_hat)
-    return (Y_hat_ == Y).all(axis=0).mean()
+def get_accuracy_value(y_hat, y):
+    y_hat_ = convert_prob_into_class(y_hat)
+    return (y_hat_ == y).all(axis=0).mean()
 
 
-def single_layer_backward_propagation(dA_curr, W_curr, b_curr, Z_curr, A_prev, activation='relu'):
-    # number of examples
-    m = A_prev.shape[1]
-    
-    # calculation of the activation function derivative
-    dZ_curr = dA_curr * activation.derivative(Z_curr)
-    
-    # derivative of the matrix W
-    dW_curr = np.dot(dZ_curr, A_prev.T) / m
-    # derivative of the vector b
-    db_curr = np.sum(dZ_curr, axis=1, keepdims=True) / m
-    # derivative of the matrix A_prev
-    dA_prev = np.dot(W_curr.T, dZ_curr)
-
-    return dA_prev, dW_curr, db_curr
-
-
-def full_backward_propagation(Y_hat, Y, memory, params_values, nn_architecture):
-    grads_values = {}
-    
+def backward_propagation(y_hat, Y):
     # number of examples
     m = Y.shape[1]
     # a hack ensuring the same shape of the prediction vector and labels vector
-    Y = Y.reshape(Y_hat.shape)
-    
+    Y = Y.reshape(y_hat.shape)
     # initiation of gradient descent algorithm
-    dA_prev = - (np.divide(Y, Y_hat) - np.divide(1 - Y, 1 - Y_hat));
-    
-    for layer_idx_prev, layer in reversed(list(enumerate(nn_architecture))):
-        # we number network layers from 1
-        layer_idx_curr = layer_idx_prev + 1
-        # extraction of the activation function for the current layer
-        activ_function_curr = layer['activation']
-        
-        dA_curr = dA_prev
-        
-        A_prev = memory['A' + str(layer_idx_prev)]
-        Z_curr = memory['Z' + str(layer_idx_curr)]
-        
-        W_curr = params_values['W' + str(layer_idx_curr)]
-        b_curr = params_values['b' + str(layer_idx_curr)]
-        
-        dA_prev, dW_curr, db_curr = single_layer_backward_propagation(
-            dA_curr, W_curr, b_curr, Z_curr, A_prev, activ_function_curr)
-        
-        grads_values['dW' + str(layer_idx_curr)] = dW_curr
-        grads_values['db' + str(layer_idx_curr)] = db_curr
-    
-    return grads_values
+    model.layers[-1].dA = - (np.divide(Y, y_hat) - np.divide(1 - Y, 1 - y_hat));
 
 
-def update(params_values, grads_values, nn_architecture, learning_rate):
+    # Iterate backwards over the layers of the neural network
+    for previous_layer, current_layer in reversed(list(zip(model.layers[:-1], model.layers[1:]))):
+        # number of examples
+        m = previous_layer.A.shape[1]
 
+        # calculation of the activation function derivative
+        current_layer.dZ = current_layer.dA * current_layer.activation_function.derivative(current_layer.Z)
+        # derivative of the matrix W
+        current_layer.dW = np.dot(current_layer.dZ, previous_layer.A.T) / m
+        # derivative of the vector b
+        current_layer.db = np.sum(current_layer.dZ, axis=1, keepdims=True) / m
+        # derivative of the matrix A_prev
+        previous_layer.dA = np.dot(current_layer.W.T, current_layer.dZ)
+
+
+def update(learning_rate):
     # iteration over network layers
-    for layer_idx, layer in enumerate(nn_architecture, 1):
-        params_values['W' + str(layer_idx)] -= learning_rate * grads_values['dW' + str(layer_idx)]        
-        params_values['b' + str(layer_idx)] -= learning_rate * grads_values['db' + str(layer_idx)]
-
-    return params_values;
+    for layer in model.layers[1:]:
+        layer.W -= learning_rate * layer.dW
+        layer.b -= learning_rate * layer.db
 
 
-def train(X, Y, nn_architecture, epochs, learning_rate, verbose=False, callback=None):
+def train(X, Y, epochs, learning_rate, verbose=False, callback=None):
     # initiation of neural net parameters
     initialise_layer_parameters()
     # initiation of lists storing the history 
@@ -188,27 +159,23 @@ def train(X, Y, nn_architecture, epochs, learning_rate, verbose=False, callback=
         last_update = progress(i + 1, epochs, start, last_update)
 
         # step forward
-        Y_hat = forward_propagation(X)
-        print(Y_hat)
-        
+        y_hat = forward_propagation(X)
         # calculating metrics and saving them in history
-        cost = get_cost_value(Y_hat, Y)
+        cost = get_cost_value(y_hat, Y)
         cost_history.append(cost)
-        accuracy = get_accuracy_value(Y_hat, Y)
+        accuracy = get_accuracy_value(y_hat, Y)
         accuracy_history.append(accuracy)
         
         # step backward - calculating gradient
-        grads_values = full_backward_propagation(Y_hat, Y, cashe, params_values, nn_architecture)
+        backward_propagation(y_hat, Y)
         # updating model state
-        params_values = update(params_values, grads_values, nn_architecture, learning_rate)
+        update(learning_rate)
         
         if(i % 50 == 0):
             if(verbose):
                 print('Iteration: {:05} - cost: {:.5f} - accuracy: {:.5f}'.format(i, cost, accuracy))
             if(callback is not None):
                 callback(i, params_values)
-            
-    return params_values
 
 
 from sklearn.datasets import make_moons
@@ -226,11 +193,11 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=TEST_SIZE, r
 
 
 # Training
-params_values = train(np.transpose(X_train), np.transpose(y_train.reshape((y_train.shape[0], 1))), model, 10000, 0.01)
+train(np.transpose(X_train), np.transpose(y_train.reshape((y_train.shape[0], 1))), 10000, 0.01)
 
 
 # Prediction
-Y_test_hat, _ = full_forward_propagation(np.transpose(X_test), params_values, nn_architecture)
+Y_test_hat = forward_propagation(np.transpose(X_test))
 
 # Accuracy achieved on the test set
 acc_test = get_accuracy_value(Y_test_hat, np.transpose(y_test.reshape((y_test.shape[0], 1))))
