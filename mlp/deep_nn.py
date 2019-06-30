@@ -76,19 +76,16 @@ def initialise_layer_parameters(seed = 2):
         current_layer.b = np.random.randn(current_layer.units, 1) * 0.1
 
 
-def forward_propagation(X): 
-    # Pass the batch, X, to the input layer in the form of layer activations
-    model.layers[0].A = X
-
+def forward_propagation(layer_input):
     # Iterate over the layers of the neural network
-    for previous_layer, current_layer in zip(model.layers[:-1], model.layers[1:]):
-        # Calculate the affine transformation, Z, for the current layer
-        current_layer.Z = np.dot(current_layer.W, previous_layer.A) + current_layer.b
-        # Calculate the activations, A, for the current layer
-        current_layer.A = current_layer.activation_function(current_layer.Z)
+    for layer in model.layers:
+        # Get the output from the current layer
+        layer_output = layer.forward_pass(layer_input)
+        # Set the out from this layer to be the input for the layer in the next iteration
+        layer_input = layer_output
 
-    # Return the activations from the last layer
-    return model.layers[-1].A
+    # Return the output from the last layer
+    return layer_output
 
 
 def get_cost_value(y_hat, y):
@@ -138,7 +135,7 @@ def backward_propagation(y_hat, Y):
 
 
 def update(learning_rate):
-    # iteration over network layers
+    # Iterate over the layers of the neural network exclusing the input layer
     for layer in model.layers[1:]:
         layer.W -= learning_rate * layer.dW
         layer.b -= learning_rate * layer.db

@@ -15,10 +15,20 @@ class Dense():
 		if activation_function is "sigmoid":
 			self.activation_function = Sigmoid()
 
+	def forward_pass(self, X):
+		# Calculate the affine transformation, Z
+		self.Z = np.dot(self.W, X) + self.b
+		# Calculate the activations, A
+		self.A = self.activation_function(self.Z)
+		return self.A
+
 class Input():
 	def __init__(self, units):
 		self.units = units
 		self.A = None
+
+	def forward_pass(self, X):
+		return X
 
 
 
