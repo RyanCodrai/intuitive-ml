@@ -4,7 +4,7 @@ import sys
 import math
 
 from models import Sequential
-from layers import Dense, Input
+from layers import Dense, Input, Activation
 
 
 def seconds_to_string(s):
@@ -55,11 +55,16 @@ def progress(current, total, start, last_update):
 
 model = Sequential()
 model.add(Input(2))
-model.add(Dense(25, activation_function="relu"))
-model.add(Dense(50, activation_function="relu"))
-model.add(Dense(50, activation_function="relu"))
-model.add(Dense(25, activation_function="relu"))
-model.add(Dense(1, activation_function="sigmoid"))
+model.add(Dense(25))
+model.add(Activation("relu"))
+model.add(Dense(50))
+model.add(Activation("relu"))
+model.add(Dense(50))
+model.add(Activation("relu"))
+model.add(Dense(25))
+model.add(Activation("relu"))
+model.add(Dense(1))
+model.add(Activation("sigmoid"))
 
 
 def initialise_layer_parameters(seed = 2):
@@ -67,25 +72,8 @@ def initialise_layer_parameters(seed = 2):
     np.random.seed(seed)
 
     # Iterate over the layers of the neural network
-    for previous_layer, current_layer in zip(model.layers[:-1], model.layers[1:]):
-        # Let units(l) be the number of units for layer l
-        # There are units(l-1) weights for every unit in the current layer
-        # This is why the weight matrix is units(l) * units(l - 1) in size
-        current_layer.W = np.random.randn(current_layer.units, previous_layer.units) * 0.1
-        # There is one bias value for each unit in the current layer
-        current_layer.b = np.random.randn(current_layer.units, 1) * 0.1
-
-
-def forward_propagation(layer_input):
-    # Iterate over the layers of the neural network
-    for layer in model.layers:
-        # Get the output from the current layer
-        layer_output = layer.forward_pass(layer_input)
-        # Set the out from this layer to be the input for the layer in the next iteration
-        layer_input = layer_output
-
-    # Return the output from the last layer
-    return layer_output
+    for layer in model.layers[1:]:
+        layer.initalise()
 
 
 def get_cost_value(y_hat, y):
@@ -116,29 +104,17 @@ def backward_propagation(y_hat, Y):
     # a hack ensuring the same shape of the prediction vector and labels vector
     Y = Y.reshape(y_hat.shape)
     # initiation of gradient descent algorithm
-    model.layers[-1].dA = - (np.divide(Y, y_hat) - np.divide(1 - Y, 1 - y_hat));
+    error_signal = - (np.divide(Y, y_hat) - np.divide(1 - Y, 1 - y_hat));
 
-
-    # Iterate backwards over the layers of the neural network
-    for previous_layer, current_layer in reversed(list(zip(model.layers[:-1], model.layers[1:]))):
-        # number of examples
-        m = previous_layer.A.shape[1]
-
-        # calculation of the activation function derivative
-        current_layer.dZ = current_layer.dA * current_layer.activation_function.derivative(current_layer.Z)
-        # derivative of the matrix W
-        current_layer.dW = np.dot(current_layer.dZ, previous_layer.A.T) / m
-        # derivative of the vector b
-        current_layer.db = np.sum(current_layer.dZ, axis=1, keepdims=True) / m
-        # derivative of the matrix A_prev
-        previous_layer.dA = np.dot(current_layer.W.T, current_layer.dZ)
+    model.layers[-1].backward_propogation(error_signal)
 
 
 def update(learning_rate):
     # Iterate over the layers of the neural network exclusing the input layer
-    for layer in model.layers[1:]:
-        layer.W -= learning_rate * layer.dW
-        layer.b -= learning_rate * layer.db
+    for layer in model.layers:
+        if isinstance(layer, Dense):
+            layer.W -= learning_rate * layer.dW
+            layer.b -= learning_rate * layer.db
 
 
 def train(X, Y, epochs, learning_rate, verbose=False, callback=None):
@@ -156,7 +132,7 @@ def train(X, Y, epochs, learning_rate, verbose=False, callback=None):
         last_update = progress(i + 1, epochs, start, last_update)
 
         # step forward
-        y_hat = forward_propagation(X)
+        y_hat = model.layers[0].forward_propagation(X)
         # calculating metrics and saving them in history
         cost = get_cost_value(y_hat, Y)
         cost_history.append(cost)
@@ -194,7 +170,7 @@ train(np.transpose(X_train), np.transpose(y_train.reshape((y_train.shape[0], 1))
 
 
 # Prediction
-Y_test_hat = forward_propagation(np.transpose(X_test))
+Y_test_hat = model.layers[0].forward_propagation(np.transpose(X_test))
 
 # Accuracy achieved on the test set
 acc_test = get_accuracy_value(Y_test_hat, np.transpose(y_test.reshape((y_test.shape[0], 1))))
