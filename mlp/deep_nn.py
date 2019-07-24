@@ -104,9 +104,9 @@ def backward_propagation(y_hat, Y):
     # a hack ensuring the same shape of the prediction vector and labels vector
     Y = Y.reshape(y_hat.shape)
     # initiation of gradient descent algorithm
-    error_signal = - (np.divide(Y, y_hat) - np.divide(1 - Y, 1 - y_hat));
+    loss_derivative = - (np.divide(Y, y_hat) - np.divide(1 - Y, 1 - y_hat));
 
-    model.layers[-1].backward_propogation(error_signal)
+    model.layers[-1].backward_propogation(loss_derivative)
 
 
 def update(learning_rate):
