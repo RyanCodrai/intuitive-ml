@@ -131,7 +131,7 @@ HTML('<img src="cost.gif">')
 ```
 
 
-![png](cost.gif)
+![png](../cost.gif)
 
 
 
