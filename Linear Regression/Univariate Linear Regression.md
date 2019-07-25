@@ -55,7 +55,7 @@ The hypothesis function is of the form $h(x) = \theta_0 + \theta_1x_1 + \theta_2
 
 Matrix multiplication is a method of combining two vectors/matricies. These types of equations would normally be performed ineffiicently using iterative loops. To vectorise the hypothesis function we must create an additional explanatory variable, $x_0$, whose value will always be equal to $1$ such that $\theta_0$ = $\theta_0x_0$.
 
-<img align="left" src="matrix_multiplication.png" width="500" height="500"/>
+<img src="matrix_multiplication.png" width="500" height="500"/>
 
 
 ```python
