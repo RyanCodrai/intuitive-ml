@@ -4,9 +4,3 @@ Machine learning methods implemented in NumPy with simple, clear explanations an
 
 ## Table of Contents
 [Simple Linear Regression](https://github.com/RyanCodrai/ml-from-the-ground-up/blob/master/Simple%20Linear%20Regression/Simple%20Linear%20Regression.ipynb)
-
-## Acknowledgments
-
-Inspired by [ml-from-scratch](https://github.com/eriklindernoren/ML-From-Scratch).
-
-![Farmers Market Finder Demo](https://github.com/RyanCodrai/ml-from-the-ground-up/blob/master/Linear%20Regression/cost.gif)
