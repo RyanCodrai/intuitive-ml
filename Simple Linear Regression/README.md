@@ -4,7 +4,7 @@ On a warm summers day nothing compares to a cold pint in good company, but on a 
 
 The [dataset](https://www.kaggle.com/dongeorge/beer-consumption-sao-paulo) we'll be working with comes from Kaggle and contains values for beer consumption along with various weather statistics for 365 days in the area of São Paulo, Brazil. Let's **hop** into looking at how we can use linear regression to model this relationship.
 
-![](beer.jpeg)
+<div align='center'><img src='beer.jpeg'></div>
 
 # Packages and settings
 
@@ -53,19 +53,6 @@ df
 
 
 <div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
@@ -239,7 +226,7 @@ plt.show()
 
 # Computing the hypothesis function via matrix multiplication
 
-We just learned how we can compute <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%24'> via scalar multiplication and addition, <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%20%3D%20%5Ctheta_0%20%2B%20%5Ctheta_1%5Cvec%7Bx%7D%24'>, but there exists another method of computing <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%24'> that is both more compact and more efficient, <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%20%3D%20X%5Ctheta%24'>.
+<span>We just learned how we can compute <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%24'> via scalar multiplication and addition, <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%20%3D%20%5Ctheta_0%20%2B%20%5Ctheta_1%5Cvec%7Bx%7D%24'>, but there exists another method of computing <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%24'> that is both more compact and more efficient, <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%20%3D%20X%5Ctheta%24'>.</span>
 
 To derive <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%20%3D%20X%5Ctheta%24'> from <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%20%3D%20%5Ctheta_0%20%2B%20%5Cvec%7Bx%7D%5Ctheta_1%24'> we:
 - Add a new column, <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24x_0%24'>, to <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24x%24'> to produce the matrix <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24X%24'>.
@@ -249,7 +236,8 @@ To derive <img valign='middle' src='https://render.githubusercontent.com/render/
 - Rewrite <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24h%28x%29%24'> as a linear combination.
 
 <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24%0A%5Cbegin%7Balign%2A%7D%0A%26%26%0Ah%28x%29%20%5C%3B%3D%5C%3B%20%5Ctheta_0%20%2B%20%5Ctheta_1x_1%20%5C%3B%0A%3D%5C%3B%20%5Ctheta_0x_0%20%2B%20%5Ctheta_1x_1%20%5C%3B%0A%5Cend%7Balign%2A%7D%0A%24'>
-- Show that the linear combination <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24%5Ctheta_0x_0%20%2B%20%5Ctheta_1x_1%24'> is equal to <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24X%5Ctheta%24'>.
+
+- <span>Show that the linear combination <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24%5Ctheta_0x_0%20%2B%20%5Ctheta_1x_1%24'> is equal to <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24X%5Ctheta%24'>.</span>
 
 <img valign='middle' src='https://render.githubusercontent.com/render/math?math=%24%0A%5Cbegin%7Balign%2A%7D%0A%26%26%0A%5Ctheta_0x_0%20%2B%20%5Ctheta_1x_1%20%20%5C%3B%3D%5C%3B%0A%5Ctheta_%7B0%7D%0A%5Cbegin%7Bbmatrix%7D%0A%20%20%20%201%5C%5C%0A%20%20%20%201%5C%5C%0A%20%20%20%20%5Cvdots%20%5C%5C%0A%20%20%20%201%5C%5C%0A%5Cend%7Bbmatrix%7D%0A%2B%0A%5Ctheta_%7B1%7D%0A%5Cbegin%7Bbmatrix%7D%0A%20%20%20%20x_%7B1%7D%5C%5C%0A%20%20%20%20x_%7B2%7D%5C%5C%0A%20%20%20%20%5Cvdots%20%5C%5C%0A%20%20%20%20x_%7Bm%7D%5C%5C%0A%5Cend%7Bbmatrix%7D%0A%5C%3B%3D%5C%3B%0A%5Cbegin%7Bbmatrix%7D%0A%20%20%20%20%5Ctheta_%7B0%7D%20%2B%20%5Ctheta_%7B1%7Dx_%7B1%7D%5C%5C%0A%20%20%20%20%5Ctheta_%7B0%7D%20%2B%20%5Ctheta_%7B1%7Dx_%7B2%7D%5C%5C%0A%20%20%20%20%5Cvdots%20%5C%5C%0A%20%20%20%20%5Ctheta_%7B0%7D%20%2B%20%5Ctheta_%7B1%7Dx_%7Bm%7D%5C%5C%0A%5Cend%7Bbmatrix%7D%0A%5C%3B%3D%5C%3B%0A%5Cbegin%7Bbmatrix%7D%0A%20%20%20%201%20%20%20%20%20%20%26%20x_%7B1%7D%20%5C%5C%0A%20%20%20%201%20%20%20%20%20%20%26%20x_%7B2%7D%20%5C%5C%0A%20%20%20%20%5Cvdots%20%20%20%20%20%20%26%20%5Cvdots%20%5C%5C%20%0A%20%20%20%201%20%20%20%20%20%20%26%20x_%7Bm%7D%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7Bbmatrix%7D%0A%20%20%20%20%5Ctheta_0%20%5C%5C%0A%20%20%20%20%5Ctheta_1%0A%5Cend%7Bbmatrix%7D%0A%5C%3B%3D%5C%3B%0AX%5Ctheta%0A%5Cend%7Balign%2A%7D%0A%24'>
 
