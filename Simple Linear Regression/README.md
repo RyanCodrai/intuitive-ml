@@ -4,7 +4,7 @@ On a warm summers day nothing compares to a cold pint in good company, but on a 
 
 The [dataset](https://www.kaggle.com/dongeorge/beer-consumption-sao-paulo) we'll be working with comes from Kaggle and contains values for beer consumption along with various weather statistics for 365 days in the area of São Paulo, Brazil. Let's **hop** into looking at how we can use linear regression to model this relationship.
 
-![](beer.jpeg)
+<div align='center'><img src='beer.jpg'></div>
 
 # Packages and settings
 
