@@ -9,7 +9,7 @@ Machine learning methods implemented in Python3 using Jupyter Notebooks with int
   <img src="Simple%20Linear%20Regression/output_18_0.svg" width="350px">
 </div>
 
-## To be completed
+## To do list
 - [x] Simple Linear Regression 
 - [ ] Multiple Linear Regression
 - [ ] Gradient descent
