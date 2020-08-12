@@ -1,4 +1,4 @@
-# Machine learning from the ground up
+# Intuative ML
 
 Machine learning methods implemented in Python3 with intuative explanations and well commented code.
 
