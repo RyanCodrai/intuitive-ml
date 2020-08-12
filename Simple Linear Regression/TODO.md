@@ -1,0 +1,4 @@
+- [ ] Run spell check
+- [ ] Add beer dataset to folder (read by github link in pandas so the notebook will run out of the box if it's opened in Google colab)
+- [ ] Add support for LaTeX in markdown headings
+- [ ] Add open in colab badge to the notebook itself
