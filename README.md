@@ -10,10 +10,15 @@ Machine learning methods implemented in Python3 using Jupyter Notebooks with int
 </div>
 
 ## To do list
-- [x] Simple Linear Regression 
-- [ ] Multiple Linear Regression
-- [ ] Gradient descent
-- [ ] Generative adversarial networks
-  - [ ] Keras implimentation
-  - [ ] Pure Numpy implimentation
-- [ ]
+- Supervised learning algorithms
+  - [x] Simple Linear Regression 
+  - [ ] Multiple Linear Regression
+
+- Unsupervised learning algorithms
+  - [ ] K-means
+  - [ ] Generative adversarial networks
+    - [ ] Keras implimentation
+    - [ ] Pure Numpy implimentation
+
+- Optimisation algorithms
+  - [ ] Gradient descent
