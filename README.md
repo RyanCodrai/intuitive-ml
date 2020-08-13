@@ -13,17 +13,20 @@ Machine learning methods implemented in Python3 using Jupyter Notebooks with int
 - Supervised learning algorithms
   - [x] Simple Linear Regression 
   - [ ] Multiple Linear Regression
-  - [ ] Convolutional neural network
-  - [ ] 
 
 - Unsupervised learning algorithms
   - [ ] K-means
+    
+- Deep learning
+  - [ ] Convolutional neural network
+    - [ ] Keras implimentation
+    - [ ] Pure Numpy implimentation
+  - [ ] Recurrent neural network
+    - [ ] Keras implimentation
+    - [ ] Pure Numpy implimentation
   - [ ] Generative adversarial networks
     - [ ] Keras implimentation
     - [ ] Pure Numpy implimentation
-    
-- Deep learning
-
 
 - Optimisation algorithms
   - [ ] Gradient descent
