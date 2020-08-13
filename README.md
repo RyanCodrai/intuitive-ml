@@ -1,6 +1,6 @@
 # Intuative ML
 
-Machine learning methods implemented in Python3 using Jupyter Notebooks with intuative explanations and well commented code. All notebooks have a markdown version that is viewable directly from this repository.
+Machine learning methods implemented in Python3 using Jupyter Notebooks with intuative explanations and well commented code. All notebooks are easily viewable as markdown files directly from this repository.
 
 ## Table of Contents
 [Simple Linear Regression](Simple%20Linear%20Regression#Introduction) <a href="https://colab.research.google.com/github/RyanCodrai/ml-from-the-ground-up/blob/master/Simple%20Linear%20Regression/Simple%20Linear%20Regression.ipynb"><img valign="middle" src="https://colab.research.google.com/assets/colab-badge.svg"></a>
@@ -13,17 +13,20 @@ Machine learning methods implemented in Python3 using Jupyter Notebooks with int
 - Supervised learning algorithms
   - [x] Simple Linear Regression 
   - [ ] Multiple Linear Regression
-  - [ ] Convolutional neural network
-  - [ ] 
 
 - Unsupervised learning algorithms
   - [ ] K-means
+    
+- Deep learning
+  - [ ] Convolutional neural network
+    - [ ] Keras implimentation
+    - [ ] Pure Numpy implimentation
+  - [ ] Recurrent neural network
+    - [ ] Keras implimentation
+    - [ ] Pure Numpy implimentation
   - [ ] Generative adversarial networks
     - [ ] Keras implimentation
     - [ ] Pure Numpy implimentation
-    
-- Deep learning
-
 
 - Optimisation algorithms
   - [ ] Gradient descent
