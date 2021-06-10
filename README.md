@@ -4,7 +4,3 @@ Machine learning methods implemented in Python3 using Jupyter Notebooks with int
 
 ## Table of Contents
 [Simple Linear Regression](simple_linear_regression#Introduction) <a href="https://colab.research.google.com/github/RyanCodrai/ml-from-the-ground-up/blob/master/simple_linear_regression/Simple%20Linear%20Regression.ipynb">
-<div>
-  <img src="simple_linear_regression/output_8_0.svg" width="350px">
-  <img src="simple_linear_regression/output_18_0.svg" width="350px">
-</div>
