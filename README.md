@@ -1,6 +1,6 @@
 # Intuative ML
 
-Machine learning methods implemented in Python3 using Jupyter Notebooks.
+Welcome to Ryan's machine learning portfolio.
 
-## Table of Contents
-[Linear Regression](linear_regression.ipynb)
+## Jupyter Notebooks
+- [Linear Regression Deep Dive](linear_regression.ipynb)
